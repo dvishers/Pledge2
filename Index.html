@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promise Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🤝 Promise Tracker</h1>
+
+        <form id="pledge-form">
+            <input type="text" id="commitment" placeholder="Enter your promise..." required>
+            <input type="number" id="amount" placeholder="Penalty amount (₹)" required>
+            <input type="text" id="person" placeholder="Person's name or phone number" required>
+            <label>
+                <input type="checkbox" id="sendSMS">
+                Send SMS notification
+            </label>
+            <button type="submit">Make Promise</button>
+        </form>
+
+        <h2>Your Promises</h2>
+        <ul id="pledge-list"></ul>
+    </div>
+
+    <script src="app.js?v=1"></script>
+</body>
+</html>

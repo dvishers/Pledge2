@@ -1,61 +1,65 @@
 document.addEventListener("DOMContentLoaded", loadPromises);
 
-document.getElementById("pledge-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+const sendSMSCheckbox = document.getElementById("sendSMS");
+const phoneNumberInput = document.getElementById("phoneNumber");
 
-    const commitment = document.getElementById("commitment").value.trim();
-    const amount = document.getElementById("amount").value.trim();
-    const person = document.getElementById("person").value.trim();
+sendSMSCheckbox.addEventListener("change", () => {
+    phoneNumberInput.disabled = !sendSMSCheckbox.checked;
+});
+
+function addPromise() {
+    const promiseText = document.getElementById("promiseText").value.trim();
+    const penaltyAmount = document.getElementById("penaltyAmount").value.trim();
     const sendSMS = document.getElementById("sendSMS").checked;
+    const phoneNumber = document.getElementById("phoneNumber").value.trim();
 
-    if (!commitment  !amount  !person) {
-        alert("Please fill in all fields.");
+    if (!promiseText || !penaltyAmount) {
+        alert("Please enter a promise and penalty amount.");
         return;
     }
 
-    const promises = JSON.parse(localStorage.getItem("promises") || "[]");
-    const newPromise = {
-        commitment,
-        amount,
-        person,
-        sendSMS,
-        date: new Date().toLocaleString()
+    const promise = {
+        text: promiseText,
+        amount: penaltyAmount,
+        date: new Date().toLocaleString(),
+        sendSMS: sendSMS,
+        phone: sendSMS ? phoneNumber : ""
     };
 
-    promises.push(newPromise);
+    let promises = JSON.parse(localStorage.getItem("promises")) || [];
+    promises.push(promise);
     localStorage.setItem("promises", JSON.stringify(promises));
 
-    document.getElementById("pledge-form").reset();
+    document.getElementById("promiseText").value = "";
+    document.getElementById("penaltyAmount").value = "";
+    document.getElementById("phoneNumber").value = "";
+    document.getElementById("sendSMS").checked = false;
+    phoneNumberInput.disabled = true;
 
     loadPromises();
-
-    if (sendSMS) {
-        alert(`(Simulated) SMS sent to ${person}: You made a promise - "${commitment}" with a penalty of ₹${amount}.`);
-    }
-});
+}
 
 function loadPromises() {
-    const pledgeList = document.getElementById("pledge-list");
-    pledgeList.innerHTML = "";
+    const promiseList = document.getElementById("promiseList");
+    promiseList.innerHTML = "";
 
-    const promises = JSON.parse(localStorage.getItem("promises") || "[]");
+    let promises = JSON.parse(localStorage.getItem("promises")) || [];
 
-    promises.forEach((p, index) => {
+    promises.forEach((promise, index) => {
         const li = document.createElement("li");
         li.innerHTML = `
-            <div>
-                <strong>${p.commitment}</strong> — ₹${p.amount}
-                <br><small>To: ${p.person}</small>
-                <br><small>Date: ${p.date}</small>
-            </div>
-            <button onclick="deletePromise(${index})">❌</button>
+            <strong>${promise.text}</strong> <br>
+            Penalty: ₹${promise.amount} <br>
+            Date: ${promise.date} <br>
+            ${promise.sendSMS ? 📩 SMS to: ${promise.phone} : ""}
+            <button class="delete-btn" onclick="deletePromise(${index})">Delete</button>
         `;
-        pledgeList.appendChild(li);
+        promiseList.appendChild(li);
     });
 }
 
 function deletePromise(index) {
-    const promises = JSON.parse(localStorage.getItem("promises") || "[]");
+    let promises = JSON.parse(localStorage.getItem("promises")) || [];
     promises.splice(index, 1);
     localStorage.setItem("promises", JSON.stringify(promises));
     loadPromises();

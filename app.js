@@ -1,3 +1,4 @@
+console.log("App.js loaded successfully!");
 document.addEventListener("DOMContentLoaded", loadPromises);
 
 const sendSMSCheckbox = document.getElementById("sendSMS");
